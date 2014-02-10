@@ -1,0 +1,23 @@
+Como todos objetos sabem das alterações do ambiente?
+    Por causa do CAmbiente, ele é responsavel por todas as operacoes feitas
+no ambiente e por avisar todas as visualizações destas alterações.
+    Quando o ComunicadorExterno recebe uma atualização por msg tcp ou via ROS
+ele faz a alteração usando o CAmbiente. O CAmbiente altera o modelo Ambiente
+e avisa todas as visualizações (todos objetos que implementão IVAmbiente).
+
+Como a Rede de Petri evolui levando em conta as informações do ambiente?
+    Esta é a tarefa do JogadorRede, ele é uma visualização da RedePetri e do
+Ambiente ao mesmo tempo, portanto ele fica sabendo de todas alterações tanto
+na Rede quanto no Ambiente. Ele mantem uma relação entre o ID de uma transição
+e uma Pergunta ou ação do ambiente, quando ocorre uma alteração tanto no Ambiente
+quanto na Rede, o Jogador verifica as transições sensibilizadas na rede, e testa
+as perguntas associado a cada transição sensibilizada, se uma pergunta for satisfeita,
+a transição é disparada, e se ela possui uma ação associada, ela também é executada.
+
+Como Ambiente é atualizado?
+    O Ambiente pode ser atualizado de diversas formas, todos os objetos que possuem
+ um CAmbiente são capazes de atualizar o Ambiente. A interface grafica do usuario
+ DAmbiente pode alterar o ambiente de acordo com as ações do usuario, o ComunicadorExterno
+ pode alterar o ambiente dependendo das mensagens que ele recebe do ambiente real e o
+ JogadorRede pode alterar o Ambiente quando uma ação for executada por uma transição da rede.
+

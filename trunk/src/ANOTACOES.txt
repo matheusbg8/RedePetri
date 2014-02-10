@@ -1,0 +1,202 @@
+TAREFAS PENDENTES:
+
+    - RESOLVER PROBLEMA DO SEGMENTO VERTICAL E A DIVISÃO POR ZERO NA EQUAÇÃO REDUZIDA DA RETA EM FUNÇÃO
+    DE Y.
+
+    - CRIAR ATRIBUTOS DE CORES PARA OS DESENHOS
+
+PROBLEMAS:
+
+	-TRATAR PROBLEMA DE CLICKE EM 2 DESENHOS AO MESMO TEMPO  [RESOLVIDO]
+		RESOLVIDO IMPLEMENTANDO MODO DE PROPAGAÇÃO DE EVENTO DISTRIBUI_PRIMEIRO_GEOMETRICO, NESSE MODO DE PROPAGAÇÃO
+     O EVENTO É PROPAGADO ATÉ ENCONTRAR UM DESENHO QUE CONTENHA O PONTO ONDE O EVENTO FOI GERADO, SE NENHUM DESENHO
+     FOR SATISFEITO, O EVENTO É PROPAGADO PARA SEU DESENHO PAI, ATÉ CHEGAR AO DESENHO MESTRE.
+
+	-TRATAR PROBLEMA DE SOLICITAÇÃO DE REDESENHO DE DOIS      [RESOLVIDO PARCIALMENTE, APENAS UM OBJETO PODE SER SELECIONADO POR VEZ]
+    DESENHOS AO MESMO TEMPO (QUEDA DE DESEMPENHO).
+		ESTE PROBLEMA FOI RESOLVIDO COM A IMPLEMENTAÇÃO DA SOLUÇÃO DO PROBLEMA ANTERIOR, POREM, DEVE SER PENSADO SE
+    SERA NECESSÁRIO SELECIONAR MAIS DE UM DESENHO AO MESMO TEMPO, SE FOR, ESTE PROBLEMA AINDA NÃO ESTA RESOLVIDO.
+
+
+        - PROVAVELMENTE SERA NECESSARIO RESOLVER O PROBLEMA DO REDESENHO SOLICITADO POR MAIS DE UM DESENHO AO MESMO TEMPO, POR
+    CAUSA DA COMPOSIÇÃO DE DESENHOS.
+
+
+PERGUNTAS:
+         O DESENHO MESTRE DEVE SER UM OBJETO DIFERENTE DOS DESENHOS COMUNS?
+
+IDÉIAS:
+
+	- HIERARQUIA DE DESENHOS REPRESENTADO POR UM GRAFO ENCADEADO, EXISTE UM DESENHO MESTRE QUE ADMINISTRA OS SINAIS E EVENTOS
+    RECEBIDOS PELO USUARIO, ESSES SINAIS E EVENTOS SÃO PROPAGADOS DE VERTICE A VERTICE ATÉ ATINGIR TODOS OS DESENHOS, OU
+    A UM DESENHO ESPECIFICO QUE SATISFASSA ALGUMA CONDIÇÃO DE ALCANCE DESSE SINAL OU EVENTO QUE ESTA SENDO PROPAGADO. [IMPLEMENTADO]
+
+
+        - TODOS OS DESENHOS SÃO DESENHADOS A PARTIR DE SUAS POSIÇÕES LOCAIS (OFFSET)
+    PELO MOTIVO DE QUE QUANDO SE ALTERA A POSIÇÃO DE UM DESENHO, TODOS
+    OS DESENHOS QUE ESTÃO DENTRO DESSE DESENHO TAMBEM SE ALTERAM.  [IMPLEMENTADO]
+
+
+        - O MAUSEEVENTO É UM MÉTODO PARA DISTRIBUIR OS SINAIS ENTRE TODOS OS
+        DESENHOS. [IMPLEMENTADO]
+
+        - COMPOSIÇÃO DE DESENHOS, UM DESENHOS PODE SER COMPOSTO POR VÁRIOS OUTROS DESENHOS
+
+
+ULTIMAS COISAS FEITAS:
+    ---------------------------- 20-12-2011 -----------------------------------------
+        - LEVANTADO A IDÉIA DO DESENHO MESTRE E A QUESTÃO, O DESENHO MESTRE DEVE SER UM OBJETO DIFERENTE DOS DESENHOS COMUNS?
+
+	- CRIADO UM PONTEIRO PARA UM DETERMINADO DESENHO "DESENHO MESTRE" QUE GERENCIA TODOS OS OUTROS DESENHOS, ESSE DESENHO MESTRE É
+    RESPONSAVEL POR RECEBER COMANDOS DO USUARIO OU DOS PROPRIOS DESENHOS E REPASSAR PARA OS OUTROS DESENHOS.
+
+        - CRIADO MOUSE EVENTO
+
+        - CRIADO UM MÉTODO PARA DISTRIBUIR O EVENTO DO MOUSE PARA TODOS DESENHOS
+
+            void mouseEvento(MouseEvento *e, DistrbuicaoMouseEvento distribuicao = DISTRIBUI_TODOS, list<Desenho*> *lista = 0x0) -
+             Distribui um evento do mouse para todos desenhos, passando de pai para filho obedecendo a condição de distribuição
+            distribuicao, começando pelos desenhos que estiverem na lista, se nenhuma lista for passada sera utilizada a lista de
+            todos os filhos do desenho em que o metodo foi chamado.
+
+        enum DistrbuicaoMouseEvento
+        {
+            DISTRIBUI_TODOS,              // Distribui para todos desenhos sem restrição
+            DISTRIBUI_GEOMETRICO,         // Distribui apenas para os desenhos que contem a posição do mouse quando o evento foi gerado
+            DISTRIBUI_PRIMEIRO_GEOMETRICO // Distribui apenas para o primeiro desenho que satisfazer a condição geometrica de cima
+        };
+
+
+	- CRIADO UM MÉTODO QUE DISTRIBUI SINAIS PARA TODOS DESENHOS, ESSES SIANIS ALTERAM AS FLAGS DOS DESENHOS, TAIS COMO A FLAG QUE
+    INDICA SE O DESENHO FOI SELECIONADO OU NÃO, OU SE ELE ESTA SENDO MOVIDO OU NÃO.
+
+            void distribuiSinal(tipoSinal sinal , list<Desenho*> *lista = 0x0) - Distribui um sinal para todos desenhos, passando de pai
+        para filho começando pelos desenhos que estiverem na lista, se nenhuma lista for passado, será usado todos os filhos do desenho
+        que o metodo foi chamado, nesse caso todos os desenhos que estiverem a um nível abaixo deste, receberam esse sinal.
+
+            tipoSinal sinal
+            {
+                SINAL_MOVER_TODOS,             // Ativa movimento para todos
+                SINAL_SELECIONAR_TODOS,        // Seleciona todos
+                SINAL_DESELECIONAR_TODOS,      // Remove selação de todos
+                SINAL_NEGA_SELECIONAR_TODOS    // Inverte a seleção de todos
+            }
+
+
+    ---------------------------- 20-12-2011 -----------------------------------------
+
+            ALGUNS DIAS PASSADOS, ALGUMAS MODIFICAÇÕES FEITAS SEM ANOTAÇÕES
+
+    ---------------------------- 29-12-2011 -----------------------------------------
+
+        - CRIADO MÉTODOS EM DESENHO:
+              globalP() -  RETORNA A POSIÇÃO GLOBAL DO DESENHO
+              referencialP() -  RETORNA A POSIÇÃO DE REFERENCIA DO DESENHO
+
+            ESSES MÉTODOS PERMITEM A DEPENDENCIA FISICA(ESPACIAL) DOS DESENHOS
+            COM SEUS PAIS.
+
+        - AJUSTE DE DESENHOS
+              QUANDO UM DESENHO FILHOS É MODIFICADO DE FORMA QUE ELE NÃO
+            CAIBA MAIS DENTRO DE SEU PAI, SEU PAI DEVE SE ADAPTAR ALTERANDO
+            SEU TAMANHO PARA QUE SEU FILHO CONTINUE CABENDO DENTRO DE SEU PAI.
+              PARA ISSO FOI CRIADO O MÉTODO:
+
+                    ajusteDesenho( Desenho * d) - faz com que o desenho se ajusta
+              modificando sua largura, altura e posição de forma que o desenhos d
+              continue fisicamente contido, esse ajuste garante que os outros
+              desenhos já contidos e não modificados continuem contido fisicamente.
+
+        - ADOTADO PADRÃO:
+              PARA QUE O AJUSTE FUNCIONE CORRETAMENTE FOI ADOTADO UM PADRÃO, TODOS
+              OS DESENHOS DEVE TER UM MÉTODO define<NOME_DESENHO>( ), QUE DEFINE AS
+              DIMESSÕES DO DESENHO. PARA O DESENHO BASE O MÉTODO É:
+
+                    defineDesenho(rPonto posicao, int largura , int altura) - define
+               as dimensões do desenho fazendo altoAjustes em desenhos superiores(PAIS) de
+               forma que o desenho continue contido fisicamente.
+
+        - CRIADO O DESENHO Segmento
+            Utilizado equação reduzida da reta para detectar colisões com mouse
+                x = ( vx/vy ) * y + (x1 - vx/vy * y1 )
+                m = vx / vy
+                n = x1 - vx/vy * y1
+                x = m *y + n
+
+        - CRIADO NOVO ATRIBUTOacaoNovoDesenho
+              O ATRIBUTO DO DESENHO PRINCIPAL DO TIPO AcaoNovoDesenho DETERMINA O QUE O
+            DESENHO DEVE FAZER QUANDO UM NOVO DESENHO FOR CRIADO.
+
+        - ADOTADO PADRÃO:
+             TODOS OS DESENHOS TEM UM MÉTODO DE INICIALIZAÇÃO QUE DEVE SER CHAMADO POR TODOS
+            CONSTRUTORES, ESSE METODO É DEFINIDO COMO void inicializa<NOME DO DESENHO>();
+
+        enum AcaoNovoDesenho
+        {
+            ACEITA_NOVOS_DESENHOS,              // Aceita o novos desenhos
+            NAO_ACEITA_NOVOS_DESENHOS,          // Não aceita novos desenhos (o desenho é desalocado e uma msg no terminal é gerada)
+            PASSA_NOVO_DESENHO_PARA_DESENHO_PAI // Repassa o novo desenho para seu pai, se não existir pai, ocorre o mesmo que na acao de cima
+        };
+
+
+    ---------------------------- 29-12-2011 -----------------------------------------
+
+    ---------------------------- 02-01-2012 -----------------------------------------
+
+        - CRIANDO POPUP MENUS DO QT
+
+
+
+
+
+
+
+===== Descricoes de classes =====
+
+DesenhoMestre
+        Esta clase foi criada para gerenciar os desenhos e permitir que
+        eles possam utilizar algumas funcionalidades do QWidget.
+Desenho
+         Esta classe define como um desenho, em geral deve se comportar.
+    Suas principais fun��es s�o:
+    * Determinar quanto de espa�o da tela um desenho precisa para ser desenhado,
+    esta defini��o deve ser feita pelos desenhos filhos utilizando o metodo
+    defineDesenho().
+    * Determina rea��es basicas a um mouseEvento, s�o elas:
+           -Quando um desenho � clicado, ele � selecionado, o foco do desenhoMestre
+        muda para esse desenho.
+           -Quando um desenho recebe um movimento do mouse, e este desenho est� selecionado,
+        a sua posi��o � alterada para a posi��o do mouse, at� um evento de mousesolto
+        for recebido.
+           -Quando o metodo novoDesenho(Desenho *d) � chamado, o novo desenho � repassado
+        para seu desenho pai, se n�o houver um desenho pai, esse novo desenho � deletado.
+        return fabs(( (t->p2->x - t->p1->x)*(t->p3->y - t->p1->y) - (t->p3->x - t->p1->x) * (t->p2->y - t->p1->y))/2);
+     }
+Container
+         Esta classe � a �nica classe que pode conter desenhos,
+    ela pose conter qualquer tipo de desenho, inclusive um
+    outro Container.
+
+DesenhoComposto
+         � um tipo de container, porem n�o aceita novos desenhos, apenas desenhos que o compoeram
+     , portanto todos os novos desenhos recebidos faram parte do DesenhoComposto e suas rea��es
+     seram determinadas pelo DesenhoComposto e n�o pelo pr�prio desenho. Para inserir novos
+     desenhos, deve-se utilizar o m�todo novaComposicao(Desenho *d), o m�todo novoDesenho(Desenho *d)
+     reage como o da classe Desenho.
+
+
+
+
+
+
+
+Funcionamento dos Eventos:
+    Os eventos foram criados para a realiza��o da cominica��o entre os desenhos, quando um desenho
+ sofre alguma modifica��o, geralmente um evento � gerado, avisando essa modifica��o.
+    Os eventos s�o distribuidos pelo metodo statico void DistribuiEvento(const Evento &evento, const dList &listaDesenhos)
+  este metodo recebe uma lista de desenhos que receberam esse evento.
+
+    A estrutura de eventos funciona da seguinte forma:
+        Quando um desenho � modificado, um evento � gerado para todos aqueles desenhos que est�o
+  interessados em receber informa��es dessa modifica��o.
+

@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>JanelaPrincipal</class>
+ <widget class="QMainWindow" name="JanelaPrincipal">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>751</width>
+    <height>469</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Editor Rede Petri</string>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0" colspan="7">
+     <widget class="WidgetDesenho" name="janelaPetri" native="true"/>
+    </item>
+    <item row="0" column="7">
+     <widget class="VisualizadorPropriedades" name="twVisualizaPropriedade">
+      <property name="columnCount">
+       <number>2</number>
+      </property>
+      <column>
+       <property name="text">
+        <string notr="true">1</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string notr="true">2</string>
+       </property>
+      </column>
+     </widget>
+    </item>
+    <item row="1" column="0">
+     <widget class="QPushButton" name="pbArco">
+      <property name="text">
+       <string>Novo Arco</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="2">
+     <widget class="QPushButton" name="pbLugar">
+      <property name="text">
+       <string>Novo Lugar</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="4">
+     <widget class="QPushButton" name="pbTransicao">
+      <property name="text">
+       <string>Nova Transição</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="6">
+     <widget class="QPushButton" name="pbNovoDesenho">
+      <property name="text">
+       <string>Nova Rede Petri</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="7">
+     <widget class="QLineEdit" name="linhaComando"/>
+    </item>
+    <item row="1" column="5">
+     <spacer name="horizontalSpacer">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>40</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item row="1" column="3">
+     <spacer name="horizontalSpacer_2">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>40</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item row="1" column="1">
+     <spacer name="horizontalSpacer_3">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>40</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>751</width>
+     <height>21</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QToolBar" name="mainToolBar">
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+  </widget>
+  <widget class="QStatusBar" name="statusBar"/>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>VisualizadorPropriedades</class>
+   <extends>QTreeWidget</extends>
+   <header>VisualizadorPropriedades.h</header>
+  </customwidget>
+  <customwidget>
+   <class>WidgetDesenho</class>
+   <extends>QWidget</extends>
+   <header>WidgetDesenho.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>pbArco</sender>
+   <signal>clicked()</signal>
+   <receiver>janelaPetri</receiver>
+   <slot>novoArco()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>34</x>
+     <y>436</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>61</x>
+     <y>349</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pbLugar</sender>
+   <signal>clicked()</signal>
+   <receiver>janelaPetri</receiver>
+   <slot>novoLugar()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>186</x>
+     <y>433</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>201</x>
+     <y>342</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pbTransicao</sender>
+   <signal>clicked()</signal>
+   <receiver>janelaPetri</receiver>
+   <slot>novaTransicao()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>306</x>
+     <y>424</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>291</x>
+     <y>307</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pbNovoDesenho</sender>
+   <signal>clicked()</signal>
+   <receiver>janelaPetri</receiver>
+   <slot>novaRedePetri()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>434</x>
+     <y>427</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>396</x>
+     <y>336</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>
